@@ -1,9 +1,11 @@
-const express = require('express')
+const express = require("express")
+const cors = require("cors")
 const axios = require("axios")
 require("dotenv").config()
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 
 app.get("/", (req, res) => {
     res.send("Treasure Hunt is ALIVE")
@@ -16,9 +18,11 @@ app.post("/solution", async (req, res) => {
     const timestamp = new Date().toISOString();
     const pName = req.body.pName;
     const response = req.body.response;
+    console.log(req.body)
     if(!pName || !response)
-        res.status(200).json({
+        return res.json({
             success: false,
+            errMsg: "Player Name or Answer is blank",
         })
 
     const accuracy = response.toLowerCase() == process.env.TH_SOLUTION;
@@ -42,7 +46,7 @@ app.post("/solution", async (req, res) => {
                         },
                         {
                         name: "Timestamp",
-                        value: `${timestamp}`,
+                        value: `<t:${Math.floor(new Date(timestamp).getTime() / 1000)}:F>`,
                         inline: true
                         },
                         {
@@ -58,7 +62,7 @@ app.post("/solution", async (req, res) => {
                     footer: {
                         text: "Brought to you by Treasure Hunting Madmen"
                     },
-                    timestamp: "2025-03-27T18:30:00.000Z"
+                    timestamp: timestamp,
                     }
                 ],
                 "attachments": []
@@ -76,11 +80,12 @@ app.post("/solution", async (req, res) => {
 
         res.status(200).json({
             success: true,
+            isCorrect: accuracy,
         })
     }
     catch(err) {
         console.log(err)
-        res.status(400).send({ error: "Something went wrong", success: false })
+        res.status(400).send({ success: false, errMsg: err.msg })
     }
 })
 

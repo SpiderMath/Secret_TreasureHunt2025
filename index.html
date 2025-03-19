@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure Hunt 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1a; /* Set background color to grey */
+            font-family: 'Creepster', sans-serif; /* Apply the imported font */
+            display: flex;
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+            flex-direction: column;
+            margin: 0; /* Remove default margin */
+        }
+
+        p {
+            color: white;
+        }
+
+        label {
+            display: block; /* Make labels block elements */
+            margin-bottom: 5px; /* Space between label and input */
+        }
+
+        input[type="text"], input[type="submit"] {
+            margin: 0 auto 15px; /* Space between inputs */
+            width: 100%; /* Adjust width to allow for padding */
+            padding: 10px 15px; /* Padding inside inputs */
+            border-radius: 20px; /* Make the text inputs rounded */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            display: block;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            border: 1px solid red; /* Border for inputs */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        #form {
+            text-align: left; /* Align text to the left */
+            background-color: #000; /* Optional: background for the form */
+            padding: 30px; /* Add some padding */
+            border-radius: 8px; /* Optional: rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: shadow effect */
+            max-width: 500px; /* Optional: set a max width for the form */
+            width: 100%;
+            margin: auto; /* Center the form horizontally */
+        }
+
+        input[type="submit"] {
+            border-radius: 20px; /* Make the submit button rounded */
+            background-color: #4CAF50; /* Optional: background color for the button */
+            color: white; /* Optional: text color for the button */
+            cursor: pointer; /* Change cursor to pointer on hover */
+            transition: background-color 0.3s; /* Optional: smooth transition for hover effect */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Optional: darker shade on hover */
+            border: 2px solid #004d00;
+        }
+
+        #result {
+            text-align: center; /* Center the text inside the result div */
+            color: white; /* Change text color to white for contrast */
+            font-size: 24px; /* Increase font size for the paragraph */
+            margin-top: 20px; /* Add some space above the result */
+            margin-bottom: 20px;
+        }
+
+        .booyah {
+            display: inline-block; /* Make the box fit the content */
+            color: white; /* White text color */
+            padding: 10px 15px; /* Padding inside the box */
+            border-radius: 20px; /* Rounded corners */
+            margin-top: 10px; /* Space above the box */
+        }
+
+        .green {
+            background-color: rgba(0, 255, 0, 0.5); /* Green background */
+        }
+
+        .red {
+            background-color: rgba(255, 0, 0, 0.5); /* Green background */
+        }
+
+        @media (max-width: 600px) {
+            #form {
+                padding: 20px; /* Reduce padding on smaller screens */
+                max-width: 90%; /* Allow the form to take up more width on mobile */
+            }
+
+            input[type="text"], input[type="submit"] {
+                padding: 10px; /* Adjust padding for inputs on mobile */
+            }
+
+            label {
+                font-size: 16px; /* Optional: adjust label font size for mobile */
+            }
+
+            #result {
+                font-size: 20px; /* Optional: adjust font size for the result on mobile */
+            }
+        }
+    </style>
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+
+            const pName = document.getElementById("pName").value;
+            const response = document.getElementById("response").value;
+            const resultElem = document.getElementById("result");
+            
+            console.log({
+                method: "POST",
+                mode: "no-cors",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: {
+                        pName,
+                        response,
+                    },
+                })
+                try {
+                const res = await fetch("http://localhost:6969/solution", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*'
+                    },
+                    body: JSON.stringify({
+                        pName,
+                        response,
+                    }),
+                });
+
+                const resp = await res.json();
+                document.getElementById("response").value = ""
+
+                if(resp.success) {
+                    if(resp.isCorrect)
+                        resultElem.innerHTML = `<p class="booyah green"> Correct answer! </p>`
+                    else
+                        resultElem.innerHTML = `<p class="booyah red"> Wrong answer... </p>`
+                }
+                else {
+                    resultElem.innerHTML = `<p class="booyah red"> Something went wrong. Contact your angel ASAP, error message: ${resp.errMsg}</p>`
+                }
+            }
+            catch(err) {
+
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="result">
+    </div>
+    <div id="form">
+        <form onsubmit="submitForm(event)">
+            <label for="pName">Player Name</label>
+            <input type="text" id="pName" name="pName" required/>
+            <br/>
+
+            <label for="response">Answer</label>
+            <input type="text" id="response" name="response" required/>
+            <br/>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>
