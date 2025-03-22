@@ -9,7 +9,7 @@ app.use(cors())
 
 app.get("/", (req, res) => {
     console.log("lemme spam 'em logs")
-    res.sendFile(__dirname + "./index.html")
+    res.sendFile(__dirname + "/index.html")
 })
 
 let incorrectCount = 1;
