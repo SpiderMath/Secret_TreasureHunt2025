@@ -8,7 +8,8 @@ app.use(express.json())
 app.use(cors())
 
 app.get("/", (req, res) => {
-    res.send("Treasure Hunt is ALIVE")
+    console.log("lemme spam 'em logs")
+    res.sendFile(__dirname + "./index.html")
 })
 
 let incorrectCount = 1;
